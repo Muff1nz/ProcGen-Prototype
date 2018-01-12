@@ -187,7 +187,7 @@ GameObject:
   - component: {fileID: 1961926867}
   - component: {fileID: 1961926868}
   m_Layer: 0
-  m_Name: HashNoiseTerrain
+  m_Name: VoxelNoiseTerrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
