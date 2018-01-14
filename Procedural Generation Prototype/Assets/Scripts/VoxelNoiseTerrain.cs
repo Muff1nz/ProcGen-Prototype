@@ -6,6 +6,10 @@ using UnityEditor;
 [CustomEditor(typeof(VoxelNoiseTerrain))]
 public class VoxelNoiseTerrain : MonoBehaviour {
 
+    public float Frequency = 1.5f;
+    public int seed = 1337;
+    public float MaxHeight = 10.0f;
+
     private List<GameObject> voxels = new List<GameObject>();
 
     public void killAllCubes() {
@@ -38,8 +42,8 @@ public class VoxelNoiseTerrain : MonoBehaviour {
             
             var voxel = GameObject.CreatePrimitive(PrimitiveType.Cube);
             voxels.Add(voxel);
-            voxel.transform.position = new Vector3(x, SimplexNoise.SimplexValue1D(new Vector3(x, 0), 1.5f));
-            
+            float height = SimplexNoise.SimplexValue1D(new Vector3(x, 0, 0) + seed * Vector3.one, Frequency) * MaxHeight;
+            voxel.transform.position = new Vector3(x, height);            
         }
     }
 }

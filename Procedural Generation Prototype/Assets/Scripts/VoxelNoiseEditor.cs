@@ -8,7 +8,6 @@ public class VoxelNoiseEditor : Editor {
 
     VoxelNoiseTerrain VNT;
 
-
     public override void OnInspectorGUI() {
         DrawDefaultInspector();
 
