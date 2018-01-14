@@ -54,6 +54,49 @@ public static class SimplexNoise {
         return sample * (8f * 2f / hashMask) - 1f;
     }
 
+    public static float SimplexValue3D(Vector3 point, float frequency) {
+        point *= frequency;
+        float skew = (point.x + point.y + point.z) * (1f / 3f);
+        float sx = point.x + skew;
+        float sy = point.y + skew;
+        float sz = point.z + skew;
+        int ix = Mathf.FloorToInt(sx);
+        int iy = Mathf.FloorToInt(sy);
+        int iz = Mathf.FloorToInt(sz);
+        float sample = SimplexValue3DPart(point, ix, iy, iz);
+        sample += SimplexValue3DPart(point, ix + 1, iy + 1, iz + 1);
+        float x = sx - ix;
+        float y = sy - iy;
+        float z = sz - iz;
+        if (x >= y) { //Figure out which tetrahedron we are in
+            if (x >= z) {
+                sample += SimplexValue3DPart(point, ix + 1, iy, iz);
+                if (y >= z) {
+                    sample += SimplexValue3DPart(point, ix + 1, iy + 1, iz);
+                } else {
+                    sample += SimplexValue3DPart(point, ix + 1, iy, iz + 1);
+                }
+            } else {
+                sample += SimplexValue3DPart(point, ix, iy, iz + 1);
+                sample += SimplexValue3DPart(point, ix + 1, iy, iz + 1);
+            }
+        } else {
+            if (y >= z) {
+                sample += SimplexValue3DPart(point, ix, iy + 1, iz);
+                if (x >= z) {
+                    sample += SimplexValue3DPart(point, ix + 1, iy + 1, iz);
+                } else {
+                    sample += SimplexValue3DPart(point, ix, iy + 1, iz + 1);
+                }
+            } else {
+                sample += SimplexValue3DPart(point, ix, iy, iz + 1);
+                sample += SimplexValue3DPart(point, ix, iy + 1, iz + 1);
+            }
+        }
+        return sample * (8f * 2f / hashMask) - 1f;
+    }
+
+
     //Helper function for SimplexValue1D
     private static float SimplexValue1DPart(Vector3 point, int ix) {
         float x = point.x - ix;
@@ -78,5 +121,18 @@ public static class SimplexNoise {
         return 0;
     }
 
-   
+    private static float SimplexValue3DPart(Vector3 point, int ix, int iy, int iz) {
+        float unskew = (ix + iy + iz) * (1f / 6f);
+        float x = point.x - ix + unskew;
+        float y = point.y - iy + unskew;
+        float z = point.z - iz + unskew;
+        float f = 0.5f - x * x - y * y - z * z;
+        if (f > 0f) {
+            float f2 = f * f;
+            float f3 = f * f2;
+            float h = hash[hash[hash[ix & hashMask] + iy & hashMask] + iz & hashMask];
+            return f3 * h;
+        }
+        return 0;
+    }
 }
