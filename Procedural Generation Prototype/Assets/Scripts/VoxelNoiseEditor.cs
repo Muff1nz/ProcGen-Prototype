@@ -17,6 +17,10 @@ public class VoxelNoiseEditor : Editor {
             VNT.genWorld();
         }
 
+        if (GUILayout.Button("3D Simplex Value MD")) {
+            VNT.gen3DSimplexValueMD();
+        }
+
         if (GUILayout.Button("Kill all cubes")) {
             VNT.killAllCubes();
         }
