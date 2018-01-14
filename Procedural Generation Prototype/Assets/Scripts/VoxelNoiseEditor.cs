@@ -13,12 +13,8 @@ public class VoxelNoiseEditor : Editor {
 
         VNT = (VoxelNoiseTerrain)target;
 
-        if (GUILayout.Button("1D Simplex Value HM")) {
-            VNT.gen1DSimplexValueHM();
-        }
-
-        if (GUILayout.Button("2D Simplex Value HM")) {
-            VNT.gen2DSimplexValueHM();
+        if (GUILayout.Button("GenerateTerrain")) {
+            VNT.genWorld();
         }
 
         if (GUILayout.Button("Kill all cubes")) {
