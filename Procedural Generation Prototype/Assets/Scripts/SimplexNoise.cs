@@ -25,6 +25,35 @@ public static class SimplexNoise {
 
     private const int hashMask = 255;
 
+    private static float squaresToTriangles = (3f - Mathf.Sqrt(3f)) / 6f; //Converts points from square grid to triangel grid
+    private static float trianglesToSquares = (Mathf.Sqrt(3f) - 1f) / 2f; //Converts points from triangle grid to square grid
+
+    //Computes the 1D Simplex value of point
+    public static float SimplexValue1D(Vector3 point, float frequency) {
+        point *= frequency;
+        int ix = Mathf.FloorToInt(point.x);
+        float sample = SimplexValue1DPart(point, ix);
+        sample += SimplexValue1DPart(point, ix + 1);
+        return sample * (2f / hashMask) - 1f;
+    }
+
+    public static float SimplexValue2D(Vector3 point, float frequency) {
+        point *= frequency;
+        float skew = (point.x + point.y) * trianglesToSquares; //Transform the triangle grid to a cube grid
+        float sx = point.x + skew;
+        float sy = point.y + skew;
+        int ix = Mathf.FloorToInt(sx);
+        int iy = Mathf.FloorToInt(sy);
+        float sample = SimplexValue2DPart(point, ix, iy);
+        sample += SimplexValue2DPart(point, ix + 1, iy + 1);
+        if (sx - ix >= sy - iy) { // Work out which triangle the point is inside
+            sample += SimplexValue2DPart(point, ix + 1, iy);
+        } else {
+            sample += SimplexValue2DPart(point, ix, iy + 1);
+        }
+        return sample * (8f * 2f / hashMask) - 1f;
+    }
+
     //Helper function for SimplexValue1D
     private static float SimplexValue1DPart(Vector3 point, int ix) {
         float x = point.x - ix;
@@ -35,12 +64,19 @@ public static class SimplexNoise {
         return f3 * h;
     }
 
-    //Computes the 1D Simplex value of point
-    public static float SimplexValue1D(Vector3 point, float frequency) {
-        point *= frequency;
-        int ix = Mathf.FloorToInt(point.x);
-        float sample = SimplexValue1DPart(point, ix);
-        sample += SimplexValue1DPart(point, ix + 1);
-        return sample * (2f / hashMask) - 1f;
+    private static float SimplexValue2DPart(Vector3 point, int ix, int iy) {
+        float unskew = (ix + iy) * squaresToTriangles;
+        float x = point.x - ix + unskew;
+        float y = point.y - iy + unskew;
+        float f = 0.5f - x * x - y * y;
+        if (f > 0f) {
+            float f2 = f * f;
+            float f3 = f * f2;
+            float h = hash[hash[ix & hashMask] + iy & hashMask];
+            return f3 * h;
+        }
+        return 0;
     }
+
+   
 }
