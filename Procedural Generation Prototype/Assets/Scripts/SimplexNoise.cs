@@ -260,7 +260,7 @@ public static class SimplexNoise {
     /// <param name="iz"></param>
     /// <returns>The simplex noise value for the corner in the tetrahedron</returns>
     private static float SimplexValue3DPart(Vector3 point, int ix, int iy, int iz) {
-        float unskew = (ix + iy + iz) * tetrahedronToCube;
+        float unskew = (ix + iy + iz) * cubeToTetrahedron;
         float x = point.x - ix + unskew;
         float y = point.y - iy + unskew;
         float z = point.z - iz + unskew;
@@ -433,7 +433,7 @@ public static class SimplexNoise {
     /// <param name="iz"></param>
     /// <returns>The simplex noise  for the corner in the tetrahedron</returns>
     private static float Simplex3DPart(Vector3 point, int ix, int iy, int iz) {
-        float unskew = (ix + iy + iz) * tetrahedronToCube;
+        float unskew = (ix + iy + iz) * cubeToTetrahedron;
         float x = point.x - ix + unskew;
         float y = point.y - iy + unskew;
         float z = point.z - iz + unskew;
