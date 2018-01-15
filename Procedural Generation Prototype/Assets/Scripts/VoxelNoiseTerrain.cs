@@ -53,7 +53,7 @@ public class VoxelNoiseTerrain : MonoBehaviour {
         for (int y = -1; y < MaxHeight; y++) {
             for (int z = (int)chunkPos.z * ChunkSize; z < (int)chunkPos.z * ChunkSize + ChunkSize; z++) {
                 for (int x = (int)chunkPos.x * ChunkSize; x < (int)chunkPos.x * ChunkSize + ChunkSize; x++) {
-                    float height = SimplexNoise.SimplexValue2D(new Vector3(x, z, 0) + seed * Vector3.one, Frequency);
+                    float height = SimplexNoise.Simplex2D(new Vector3(x, z, 0) + seed * Vector3.one, Frequency);
                     height = (height + 1f) / 2f;
                     height *= MaxHeight;
                     if (y < height) {
