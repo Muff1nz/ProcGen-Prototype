@@ -8,6 +8,7 @@ using System;
 public class VoxelNoiseTerrain : MonoBehaviour {
 
     public float Frequency = 1.5f;
+    public int octaves = 1;
     public int seed = 1337;
     public float MaxHeight = 10.0f;
 
@@ -53,7 +54,7 @@ public class VoxelNoiseTerrain : MonoBehaviour {
         for (int y = -1; y < MaxHeight; y++) {
             for (int z = (int)chunkPos.z * ChunkSize; z < (int)chunkPos.z * ChunkSize + ChunkSize; z++) {
                 for (int x = (int)chunkPos.x * ChunkSize; x < (int)chunkPos.x * ChunkSize + ChunkSize; x++) {
-                    float height = SimplexNoise.Simplex2D(new Vector3(x, z, 0) + seed * Vector3.one, Frequency);
+                    float height = calcNoise(new Vector3(x, z, 0));
                     height = (height + 1f) / 2f;
                     height *= MaxHeight;
                     if (y < height) {
@@ -78,5 +79,16 @@ public class VoxelNoiseTerrain : MonoBehaviour {
         chunk.AddComponent<MeshRenderer>();
         chunk.GetComponent<MeshRenderer>().material = mat;
         chunk.GetComponent<MeshFilter>().mesh.CombineMeshes(voxels, true, true);
+    }
+
+    private float calcNoise(Vector3 pos) {
+        float noise = 0;
+        float strength = 1;
+        float scaling = 0;
+        for (int i = 0; i < octaves; i++) {
+            noise += SimplexNoise.Simplex3D(pos + seed * Vector3.one * strength, Frequency / strength) * strength;
+            scaling += strength; strength /= 2;
+        }
+        return noise / scaling;
     }
 }
